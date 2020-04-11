@@ -1,0 +1,33 @@
+
+type PTPromise {
+  id: ID
+  title: String
+  createdAt: String
+  content: String
+}
+
+input PTPromiseInput {
+  title: String
+  content: String
+}
+
+type HolochainInstance {
+  agent: String
+  dna: String
+  instance: String
+}
+
+
+type Query {
+  ## getPtPromise(id: String): PTPromise
+  getPtPromise: PTPromise
+  allPtPromises: [PTPromise]
+  holochainInstances: [HolochainInstance]
+}
+
+ ## type Mutation {
+  ## createPtPromiseInput: PtPromiseInput: PTPromise
+  ## updateNote(id: String, noteInput: NoteInput): Note
+  ## removeNote(id: String): Note
+## }
+  

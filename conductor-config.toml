@@ -1,0 +1,49 @@
+bridges = []
+persistence_dir = ''
+ui_bundles = []
+ui_interfaces = []
+
+[[agents]]
+id = 'test-agent'
+keystore_file = 'testAgent'
+name = 'testAgent'
+public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+test_agent = true
+
+[[dnas]]
+file = '/home/revial/prog/holochain/hcmin/dist/hcmin.dna.json'
+hash = 'QmaSDmaU1qMTw23MVLVFVZqBuMzGLoqbpuYT1LPEjFGTFs'
+id = 'pt-promises-dna'
+
+[[instances]]
+agent = 'test-agent'
+dna = 'pt-promises-dna'
+id = 'test-instance'
+
+[instances.storage]
+type = 'memory'
+
+[[interfaces]]
+admin = true
+id = 'websocket-interface'
+
+[[interfaces.instances]]
+id = 'test-instance'
+
+[interfaces.driver]
+port = 33000
+type = 'websocket'
+
+[logger]
+state_dump = true
+type = 'debug'
+
+[logger.rules]
+rules = []
+
+[passphrase_service]
+type = 'cmd'
+
+[signals]
+consistency = false
+trace = false

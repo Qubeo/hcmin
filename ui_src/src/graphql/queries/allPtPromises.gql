@@ -1,0 +1,8 @@
+query allPtPromises {
+    allPtPromises @client {
+        id
+        title
+        content
+        createdAt
+    }
+}

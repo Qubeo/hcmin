@@ -1,0 +1,12 @@
+{
+    "name": "hcmin",
+    "schemaPath": "./graphql/schema.js",
+    "extensions": {
+        "endpoints": {
+            "Remote GraphQL Endpoint": {
+                "url": "http://localhost:4000/graphql",
+                "introspect": true
+            }
+        }
+    }
+}

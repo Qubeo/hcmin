@@ -3,18 +3,20 @@
 use hdk::prelude::*;
 use hdk_proc_macros::zome;
 
-// see https://developer.holochain.org/api/0.0.46-alpha1/hdk/ for info on using the hdk library
+use hdk::holochain_core_types::{
+    time::Iso8601,
+};
 
-// This is a sample zome that defines an entry type "MyEntry" that can be committed to the
-// agent's chain via the exposed function create_my_entry
+use hdk::AGENT_ADDRESS;
 
-#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct MyEntry {
-    content: String,
-}
+use crate::pt_promise::PTPromise;
+use crate::pt_promise::PTPromiseEntry;
 
+pub mod pt_promise;
+
+// Q: Where's defined the zome name, used for the JSON-RPC API? 
 #[zome]
-mod my_zome {
+mod pt_promises {
 
     #[init]
     fn init() {
@@ -27,29 +29,32 @@ mod my_zome {
     }
 
     #[entry_def]
-    fn my_entry_def() -> ValidatingEntryType {
-        entry!(
-            name: "my_entry",
-            description: "this is a same entry defintion",
-            sharing: Sharing::Public,
-            validation_package: || {
-                hdk::ValidationPackageDefinition::Entry
-            },
-            validation: | _validation_data: hdk::EntryValidationData<MyEntry>| {
-                Ok(())
-            }
-        )
+    fn pt_promise_def() -> ValidatingEntryType {
+        pt_promise::pt_promise_definition()
     }
 
     #[zome_fn("hc_public")]
-    fn create_my_entry(entry: MyEntry) -> ZomeApiResult<Address> {
-        let entry = Entry::App("my_entry".into(), entry.into());
-        let address = hdk::commit_entry(&entry)?;
-        Ok(address)
+    fn create_pt_promise(entry: PTPromiseEntry) -> ZomeApiResult<PTPromise> {     
+        pt_promise::handlers::create_pt_promise(entry)          // Q: Naming convention. Wouldn't "create" be enough, if namespaced?
     }
 
     #[zome_fn("hc_public")]
-    fn get_my_entry(address: Address) -> ZomeApiResult<Option<Entry>> {
+    pub fn get_agent_address() -> ZomeApiResult<Address> {
+        Ok(Address::from(AGENT_ADDRESS.to_string()))
+    }
+
+    #[zome_fn("hc_public")]
+    pub fn get_entry_timestamp(entry_addr: Address) -> ZomeApiResult<Iso8601> {
+        pt_promise::timestamp(entry_addr)
+    }
+
+    // Distinguish code for the different agents
+    // TODO: Create a mermaid diagram
+    // AGENT A
+    // AGENT B
+
+    #[zome_fn("hc_public")]
+    fn get_entry(address: Address) -> ZomeApiResult<Option<Entry>> {
         hdk::get_entry(&address)
     }
 }
