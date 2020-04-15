@@ -17,7 +17,6 @@ type HolochainInstance {
   instance: String
 }
 
-
 type Query {
   ## getPtPromise(id: String): PTPromise
   getPtPromise: PTPromise
@@ -25,9 +24,10 @@ type Query {
   holochainInstances: [HolochainInstance]
 }
 
- ## type Mutation {
-  ## createPtPromiseInput: PtPromiseInput: PTPromise
+ type Mutation {
+ 
+  createPtPromise(ptPromiseInput: PTPromiseInput): PTPromise
   ## updateNote(id: String, noteInput: NoteInput): Note
   ## removeNote(id: String): Note
-## }
+ }
   

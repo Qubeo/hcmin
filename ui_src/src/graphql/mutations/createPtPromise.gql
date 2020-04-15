@@ -1,0 +1,6 @@
+mutation createPtPromise($prPromiseInput: PTPromiseInput) {
+    createPtPromise(ptPromiseInput: $ptPromiseInput) @client {
+        title
+        content
+    }
+}

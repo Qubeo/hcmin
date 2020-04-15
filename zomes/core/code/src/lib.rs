@@ -34,6 +34,11 @@ mod pt_promises {
     }
 
     #[zome_fn("hc_public")]
+    pub fn list_pt_promises() -> ZomeApiResult<Vec<PTPromise>> {
+        pt_promise::handlers::list_pt_promises()
+    }
+
+    #[zome_fn("hc_public")]
     fn create_pt_promise(entry: PTPromiseEntry) -> ZomeApiResult<PTPromise> {     
         pt_promise::handlers::create_pt_promise(entry)          // Q: Naming convention. Wouldn't "create" be enough, if namespaced?
     }

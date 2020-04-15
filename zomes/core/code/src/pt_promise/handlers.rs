@@ -35,7 +35,8 @@ fn pt_promises_anchor() -> ZomeApiResult<Address> {
 pub fn create_pt_promise(pt_promise_entry: PTPromiseEntry) -> ZomeApiResult<PTPromise> {
     let entry = Entry::App(PT_PROMISE_ENTRY_NAME.into(), pt_promise_entry.clone().into());
     let address = hdk::commit_entry(&entry)?;    
-    // hdk::link_entries(&pt_promises_anchor()?, &address, PT_PROMISE_LINK_TYPE, "")?;
+
+    hdk::link_entries(&pt_promises_anchor()?, &address, PT_PROMISE_LINK_TYPE, "")?;
     PTPromise::new(address, pt_promise_entry)
     
 }
@@ -64,6 +65,7 @@ pub fn remove_pt_promise(id: Address) -> ZomeApiResult<Address> {
     hdk::remove_entry(&id)
 
 }
+
 
 pub fn list_pt_promises() -> ZomeApiResult<Vec<PTPromise>> {
      hdk::get_links_and_load(&pt_promises_anchor()?, LinkMatch::Exactly(PT_PROMISE_LINK_TYPE), LinkMatch::Any)
