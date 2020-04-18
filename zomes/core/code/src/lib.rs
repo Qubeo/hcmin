@@ -33,6 +33,11 @@ mod pt_promises {
         pt_promise::pt_promise_definition()
     }
 
+     #[entry_def]
+    fn anchor_def() -> ValidatingEntryType {
+        holochain_anchors::anchor_definition()
+    }
+
     #[zome_fn("hc_public")]
     pub fn list_pt_promises() -> ZomeApiResult<Vec<PTPromise>> {
         pt_promise::handlers::list_pt_promises()

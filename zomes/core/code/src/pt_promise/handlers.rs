@@ -25,7 +25,6 @@ use crate::pt_promise::{
 };
 
 
-
 fn pt_promises_anchor() -> ZomeApiResult<Address> {
     anchor(PT_PROMISES_ANCHOR_TYPE.to_string(), PT_PROMISES_ANCHOR_TEXT.to_string())
 }

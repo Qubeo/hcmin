@@ -19,8 +19,16 @@ const schemaLink = new SchemaLink({
 // Q: Do the WS calls directly over Apollo?
 // Q: Implement GraphQL server directly on Holochain? :o
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql"
+  uri: "http://localhost:4000/graphql",
+  fetchPolicy: 'no-cache'
 });
+
+const defaultOptions = {
+  Query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+}
 
 // var links = [schemaLink];
 
@@ -30,14 +38,15 @@ const httpLink = createHttpLink({
 
 // const link = ApolloLink.from(links);
 
-const apolloCache = new InMemoryCache(); // Q: { addTypename: true }?
+const apolloCache = new InMemoryCache({ fetchPolicy: 'no-cache' }); // Q: { addTypename: true }?
 
 const apolloClient = new ApolloClient({
   link: httpLink,
   cache: apolloCache,
   typeDefs,
   resolvers,  
-  connectToDevTools: true
+  connectToDevTools: true,
+  options: defaultOptions
 });
 
 export default apolloClient;

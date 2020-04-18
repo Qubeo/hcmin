@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/home/revial/prog/holochain/hcmin/dist/hcmin.dna.json'
-hash = 'Qmc4hpRguhgRGUJAmvQ3e6soTQgeq4YyTkBkEAbkQ4JcXF'
+hash = 'Qmf2SUSaUj7PRWq1SmQ3HxWTjfUyL4UDjPNFAdb4DoAQZU'
 id = 'pt-promises-dna'
 
 [[instances]]

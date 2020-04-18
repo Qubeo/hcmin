@@ -1,5 +1,7 @@
 /*eslint no-unused-vars: "warn"*/
 
+import * as hcWebClient from "@holochain/hc-web-client";
+
 export class hcWsClient {
     constructor(conductorConfig) {
 
@@ -14,30 +16,71 @@ export class hcWsClient {
         
         // Q: Persistent ws object, or re-create or each call?
         // If persistent, then how should the on "open" work?
-        this.ws = new WebSocket(conductorConfig.url + ":" + conductorConfig.port);
-        this.ws.on('error', function(err) { console.log("ws error: "); console.log(err); });
+        // this.ws = new WebSocket(conductorConfig.url + ":" + conductorConfig.port);
+        // this.ws.on('error', function(err) { console.log("ws error: "); console.log(err); });
     }    
+    
       // Method
     async getHcInstances() {
         let that = this;
-        let hcResult = {};
+        let ws = new this.WebSocket(this.conductorConfig.url + ":" + this.conductorConfig.port);
+
+        let hcResult = null; //new Promise(() => res);
         console.log("simpleHcWs: getHcInstances(): ");
-        that.ws.on('open', function() {
+
+        let method = 'info/instances';
+        let payload = {};
+        let timeout = 1000;
+        
+
+        // Modified from hc-web-client
+        if (ws.ready) {
+            return Promise.resolve(ws.call('info/instances', ''))
+          } else {
+            return new Promise((resolve, reject) => {
+              const timer = timeout
+                ? setTimeout(() => {
+                  reject(`Timeout while waiting for ws to connect. method: ${method}, payload: ${JSON.stringify(payload)}`)
+                }, timeout)
+                : null
+              ws.once('open', () => {
+                clearTimeout(timer)
+                ws.call(method, payload).then(resolve).catch(reject)
+              })
+            })
+          }
+
+        // Q: Shouldn't this be already pre-loaded before? Not waiting until executing the query? 
+        /*
+        ws.on('open', function() {
     
             let method = 'info/instances';
             let params = {};            
             // call an RPC method with parameters
             // TODO: Error handling, how?
-            that.ws.call(method, params).then(result => {
+            ws.call(method, params).then(result => {
                 hcResult = result;
                 console.log("getHcInstances result arrived: ");
-                console.log(result);
+                console.log(hcResult);
             });
         }); 
         console.log("getHcinstances(): hcResult: ");
         console.log(hcResult);
+        
         // JSON.parse(result).map(r => { return { ...r, __typename: "HolochainInstance"} });
-        return await Promise.all([hcResult]);       
+        return hcResult; // await Promise.all([hcResult]);       
+        */
+       /*
+
+        let result = hcWebClient.connect({ url: "ws://localhost:33000" }).then(({ callZome, close, onSignal }) => {
+            callZome('info/instances', '', '')({}).then((res) => { hcResult = res; console.log("Ryzolf: "); console.log(res); });
+        });
+        console.log("hcResult: ");
+        console.log(result);
+
+        return hcResult;
+
+        */
     }
 
     async callZome(instanceId, zomeName, zomeFn, args) {
@@ -45,8 +88,36 @@ export class hcWsClient {
         let ws = new this.WebSocket(this.conductorConfig.url + ":" + this.conductorConfig.port);
         ws.on('error', function(err) { console.log("ws error: "); console.log(err); });
         
-        console.log("simpleHcWssssss: callZome(): ");
+        console.log("simpleHcWs: callZome(): ");
         // let that = this;
+
+        let method = "call";
+        let params = {
+            instance_id: instanceId,
+            zome: zomeName,
+            function: zomeFn,
+            args: args
+        };
+        let timeout = 1000;
+             // Modified from hc-web-client
+        if (ws.ready) {
+            return Promise.resolve(ws.call(method, params))
+        } else {
+            return new Promise((resolve, reject) => {
+                const timer = timeout ? setTimeout(() => {
+                      reject(`Timeout while waiting for ws to connect. method: ${method}, payload: ${JSON.stringify(params)}`)
+                    },
+                    timeout) : null;
+
+                ws.once('open', () => {
+                    clearTimeout(timer);
+                    ws.call(method, params).then(resolve).catch(reject);
+                });
+                
+            })
+        }
+        
+        /*
         try {
             ws.on('open', function() {
                 let method = 'call';                    // Q: vs. /instance/zome/fnName syntax?
@@ -77,6 +148,7 @@ export class hcWsClient {
             console.log(err);
             return { error: err };
         }  
+        */
     }
 
     async getAgentAddress() {

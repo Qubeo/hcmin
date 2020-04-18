@@ -2,7 +2,13 @@ query allPtPromises {
     allPtPromises @client {
         id
         title
+        context
         content
         createdAt
+        lifetime
+        location {
+             city
+             country
+        }
     }
 }

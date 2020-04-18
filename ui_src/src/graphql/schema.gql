@@ -1,9 +1,23 @@
 
+type Position {
+  lat: Float
+  lng: Float
+}
+
+type Location {
+  city: String
+  country: String
+  position: Position
+}
+
 type PTPromise {
   id: ID
   title: String
-  createdAt: String
+  context: String
   content: String
+  createdAt: String
+  lifetime: Integer
+  location: Location
 }
 
 input PTPromiseInput {
@@ -22,6 +36,10 @@ type Query {
   getPtPromise: PTPromise
   allPtPromises: [PTPromise]
   holochainInstances: [HolochainInstance]
+}
+
+type Subscription {
+  allPtPromisesSub: [PTPromise]
 }
 
  type Mutation {

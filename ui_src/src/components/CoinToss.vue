@@ -1,40 +1,36 @@
 <template>
   <div>
+    <div v-if="hcInstancesLoading">hcInstances Loading...</div>
+    <div v-else-if="hcInstancesErr">
+      hcInstances error! {{ hcInstancesErr }}
+    </div>
+    <div v-else>hcInstances Result: {{ gotHcInstances }}</div>
+    <br />
 
+    <div v-if="ptListLoading">ptList Loading...</div>
+    <div v-else-if="ptListErr">ptList Error! {{ ptListErr }}</div>
+    <div v-else>ptList Result: {{ gotPtPromises }}</div>
 
-      <div v-if="hcInstancesLoading">Loading...</div>
-      <div v-else-if="hcInstancesErr"> hcInstances error! {{ hcInstancesErr }}</div>
-      <div v-else> Result: {{ gotHcInstances }} </div>
-
-      <!-- <div v-if="allPtPromisesLoading">Loading...</div>
-      <div v-else-if="allPtPromisesError"> Error! {{ allPtPromisesError }}</div>
-      <div v-else> Result: {{ gotPtPromises }} </div> -->
-      
-      <button @click="commitPtPromise(ptMock)">Create PT</button>
-      
-      
-
+    Pt title: <br />
+    <input type="text" v-model="ptInput.title" /><br />
+    Pt content: <br />
+    <input type="text" v-model="ptInput.content" /><br />
+    <button @click="commitPtPromise(ptInput)">Create PT</button>
+    <button @click="3">Show list</button>
   </div>
 </template>
 
 <script>
 /*eslint no-unused-vars: "warn"*/
 
-import { useQuery, useResult, useMutation } from "@vue/apollo-composable";
+import { useQuery, useLazyQuery, useResult, useMutation } from "@vue/apollo-composable";
 import allPtPromisesQuery from "../graphql/queries/allPtPromises.gql";
 import holochainInstancesQuery from "../graphql/queries/holochainInstances.gql";
 import addPtPromiseMutation from "../graphql/mutations/createPtPromise.gql";
 import * as hcWebClient from "@holochain/hc-web-client";
-import { onMounted } from "@vue/composition-api";
+import { onMounted, reactive } from "@vue/composition-api";
 import { hcWsClient, simpleWs } from "../resolvers/simpleHcWs.js";
 
-const mockPromise = {
-  __typename: "PTPromise",
-  id: "xABC",
-  title: "Promise title",
-  content: "Content",
-  createdAt: "12/04/2020"
-};
 
 export default {
   name: "CoinToss",
@@ -43,76 +39,76 @@ export default {
     // console.log("CoinToss.vue: allPtPromisesQuery: ");
     // console.log(allPtPromisesQuery);
 
-    const { result: hcInstancesRes, loading: hcInstancesLoading, error: hcInstancesErr } = useQuery(holochainInstancesQuery);
+    
+    const {
+      result: hcInstancesRes,
+      loading: hcInstancesLoading,
+      error: hcInstancesErr,
+      onResult
+    } = useQuery(holochainInstancesQuery);
+    
+
+    function handleBla() {
+      alert("prdel vole");
+    }
+
+    const {
+      result: ptListRes,
+      loading: ptListLoading,
+      error: ptListErr,
+      refetch: refetchPt
+    } = useQuery(allPtPromisesQuery);
+
+    //gotPts();
+
+    console.log("useQuery(prPromisesbla): ");
+    console.log(ptListRes);
+
     const { mutate: addPtPromiseMutFn } = useMutation(addPtPromiseMutation);
 
-    console.log("CoinToss: allPtPromisesResult: ");
-    console.log(allPtPromisesResult);
-          
+    const ptInput = reactive({ title: "default", content: "default" });
+
+
+    const gotPtPromises = useResult(ptListRes, null, (data) => data.allPtPromises); //data.allPtPromises    
+    const gotHcInstances = useResult(hcInstancesRes, null, (data) => data.holochainInstances);
+
+    const onSignal = (signal) => { console.log("Signal from hc! "); console.log(signal); };
+
+    // hcWebClient.addSignalReceptor(onSignal);
+    
     function commitPtPromise(ptPromiseInput) {
       console.log("commitPtPromise: ");
       // console.log();
 
       // TODO: Možná přidat kopii toho objektu. Alá Vuetify data table CRUD.
       // Takhle chyba: když přidám víckrát, mění se všechny položky v cache. Tj. reaktivita tam, kde nemá bejt už. Need deep copy asi.
-      // Ale bacha na scoping.  
-      var resToSave = {};      
+      // Ale bacha na scoping.
+      var resToSave = {};
       Object.assign(resToSave, ptPromiseInput);
       // console.log(offReqToSave);
       // offReqToSave.id = uuidv4();
       // TODO: Hashing function analogical to the HC one. See my cointoss repo?
 
-      let res = addPtPromiseMutFn({ ptPromiseInput: ptPromiseInput });    
+      let res = addPtPromiseMutFn({ ptPromiseInput: ptPromiseInput });
+
+      setTimeout(500);
+      refetchPt();
       console.log(res);
-      return res;        
+      return res;
     }
-
-    var allPtPromisesResult = {};
-    var allPtPromisesError = {};
-    var allPtPromisesLoading = {};
     
-    const gotHcInstances = useResult(
-        hcInstancesRes,
-        null,
-        data => data
-    );
-
-    const gotPtPromises = useResult(
-        allPtPromisesResult,
-        null,
-        data => data //data.allPtPromises
-      );
-
-
-    const conductorConfig = {
-      url: "ws://localhost",
-      port: 33000,
-      dna: "pt-promises-dna",
-      instanceId: "test-instance",
-      zomeName: "core"
-    };
-
-    const ptMock = {
-      title: "prdel",
-      content: "prdel"
-    };
-
     onMounted(async () => {
-        // console.log("CoinToss: onMounted(): ");
-        // let hcInstances = await hcWs.getHcInstances();
-        // console.log(hcInstances);
+      // console.log("CoinToss: onMounted(): ");
+      // let hcInstances = await hcWs.getHcInstances();
+      // console.log(hcInstances);
       // const { result: ptRes, loading: ptLoad, error: ptErr } = useQuery(allPtPromisesQuery);
       // allPtPromisesResult = ptRes;
       // allPtPromisesLoading = ptLoad;
       // allPtPromisesError = ptErr;
-
       // let hcAgentAddress = hcWs.getAgentAddress();
       // console.log(hcAgentAddress);
-
-          
       // Q: What about directly connecting to the Apollo cache, vs. the querying wrapping?
-
-/*
+      /*
     hcWebClient
       .connect({ url: conductorConfig.url + ":" + conductorConfig.port })
       .then(({ callZome, close, onSignal }) => {
@@ -129,19 +125,18 @@ export default {
         return result;
       });
       */
-    })
+    });
 
     return {
-      allPtPromisesLoading,
-      allPtPromisesError,
       gotPtPromises,
       gotHcInstances,
       hcInstancesLoading,
       hcInstancesErr,
       hcInstancesRes,
-      ptMock,
-      conductorConfig,
-      commitPtPromise
+      ptListLoading,
+      ptListErr,
+      ptInput,
+      commitPtPromise,
     };
   },
 };
