@@ -8,7 +8,8 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: Home,
+    props: (route) => ({ hcPort: parseInt(route.query.hcPort) })
   },
   {
     path: "/about",

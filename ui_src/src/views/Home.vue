@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <CoinToss></CoinToss>
+    <CoinToss :hcPort="props.hcPort"></CoinToss>
   </div>
 </template>
 
@@ -12,6 +12,17 @@ export default {
   name: "Home",
   components: {
     CoinToss
+  },
+  props: {
+    hcPort: Number
+  },
+
+  setup(props) {
+
+    return {
+      props
+    }
   }
+
 };
 </script>

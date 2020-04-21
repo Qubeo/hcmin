@@ -20,6 +20,14 @@ const conductorConfig = {
   zomeName: "core"
 };
 
+const conductor2Config = {
+  url: "ws://localhost",
+  port: 33000,
+  dna: "pt-promises-dna",
+  instanceId: "test-instance",
+  zomeName: "core"
+};
+
 const mockInstances = [{
   __typename: "HolochainInstance",
   id: "pdel",
@@ -80,22 +88,20 @@ async function makeZomeCall(instanceId, zomeName, funcName) {
   }
 }
 
-const hcWs = new hcWsClient(conductorConfig);
 
 export const resolvers = {
   // Q: Does it make sense to plaster this here? How is Apollo using the resolvers object?
   // Q: Ideally the connection should be handled by Apollo client, no? But then... huh.
-    
   Query: {
     
-    holochainInstances: async () => {
+    holochainInstances: async (parent, args, context, info) => {
       // Q: Separate concerns? Put to external function / module / service & compose?
       // Q: How to persist the hcWs object here, not to re-instantiate it in every query, mutation etc.?
       // Should it be an Apollo client-level persistence?
       // const hcWs = new hcWsClient(conductorConfig);    
       console.log("resolvers: Query: holochainInstances(): ");      
       
-      let hcInstances = await hcWs.getHcInstances();
+      let hcInstances = await context.hcWs.getHcInstances();
       console.log(hcInstances);
       
       hcInstances = hcInstances.map(d => { return { ...d, __typename: "HolochainInstance" }; });      
@@ -107,15 +113,16 @@ export const resolvers = {
       // dnaToUiPtPromise(await createZomeCall('/notes/notes/get_note')({ id })),
     },
 
-    allPtPromises: async () => {
+    allPtPromises: async (parent, args, context, info) => {
       // let that = this.that;        // !!!: I'm getting "this is undefined" here. Bacha.
       console.log("resolvers: Query: allPtPromises(): ");
+      console.log(context);
       //return [mockPromise];
       
       let res = [];
       try {
-        console.log(hcWs);
-        let res = await hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "list_pt_promises", {});      
+        console.log(context.hcWs);
+        let res = await context.hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "list_pt_promises", {});      
         console.log(res);
 
         let resJSON = (JSON.parse(res).Ok).map(d => {
@@ -140,12 +147,12 @@ export const resolvers = {
   Mutation: {
     
     // TODO: Correct the argument format. Align hc and GraphQL argument shape.
-    createPtPromise: async (_, { ptPromiseInput }) => {
+    createPtPromise: async (_, { ptPromiseInput }, context) => {
       //dnaToUiNote(await createZomeCall('/notes/notes/create_note')({ note_input: noteInput })),      
       console.log("Mutation: createPtPromise(): ");
 
       // Q: callZome vs. createZomeCall - semantics - which is more accurate? What exactly is the dynamics of the process.
-      let result = await hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "create_pt_promise", { entry: ptPromiseInput });      
+      let result = await context.hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "create_pt_promise", { entry: ptPromiseInput });      
       let resJSON = { ...JSON.parse(result).Ok, __typename: "PTPromiseInput" }; // TODO: Error handle.
               
       console.log(resJSON);

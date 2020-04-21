@@ -4,20 +4,20 @@ ui_bundles = []
 ui_interfaces = []
 
 [[agents]]
-id = 'test-agent'
-keystore_file = 'testAgent'
-name = 'testAgent'
-public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+id = 'hc-run-agent'
+keystore_file = 'Blb'
+name = 'Blb'
+public_address = 'HcSCIRNvyAwzrfth5zj5H3Be7iWrq7kj3yDSXjZ6vMqbjpp7J8VWnU8hEQk88wa'
 test_agent = true
 
 [[dnas]]
 file = '/home/revial/prog/holochain/hcmin/dist/hcmin.dna.json'
 hash = 'Qmf2SUSaUj7PRWq1SmQ3HxWTjfUyL4UDjPNFAdb4DoAQZU'
-id = 'pt-promises-dna'
+id = 'hc-run-dna'
 
 [[instances]]
-agent = 'test-agent'
-dna = 'pt-promises-dna'
+agent = 'hc-run-agent'
+dna = 'hc-run-dna'
 id = 'test-instance'
 
 [instances.storage]
@@ -31,7 +31,7 @@ id = 'websocket-interface'
 id = 'test-instance'
 
 [interfaces.driver]
-port = 33000
+port = 33001
 type = 'websocket'
 
 [logger]
@@ -40,6 +40,10 @@ type = 'debug'
 
 [logger.rules]
 rules = []
+
+[network]
+sim2h_url = 'ws://localhost:9000'
+type = 'sim2h'
 
 [passphrase_service]
 type = 'cmd'

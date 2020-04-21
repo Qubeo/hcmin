@@ -16,6 +16,8 @@ const schemaLink = new SchemaLink({
 });
 */
 
+// TODO: Let the hc connection options be passed from App.
+
 // Q: Do the WS calls directly over Apollo?
 // Q: Implement GraphQL server directly on Holochain? :o
 const httpLink = createHttpLink({

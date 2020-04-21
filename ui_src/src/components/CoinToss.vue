@@ -7,6 +7,13 @@
     <div v-else>hcInstances Result: {{ gotHcInstances }}</div>
     <br />
 
+    <div v-for="(item, index) in gotPtPromises" :key="index">
+      <pt-card :ptItem="item"></pt-card>
+    </div>
+    
+    <cyto-dash  style="border-radius:3px; border:1px solid #ccc; margin-left: 800px; "></cyto-dash>
+    
+
     <div v-if="ptListLoading">ptList Loading...</div>
     <div v-else-if="ptListErr">ptList Error! {{ ptListErr }}</div>
     <div v-else>ptList Result: {{ gotPtPromises }}</div>
@@ -30,22 +37,37 @@ import addPtPromiseMutation from "../graphql/mutations/createPtPromise.gql";
 import * as hcWebClient from "@holochain/hc-web-client";
 import { onMounted, reactive } from "@vue/composition-api";
 import { hcWsClient, simpleWs } from "../resolvers/simpleHcWs.js";
-
+import CytoDash from "./CytoDash.vue";
+import PtCard from "./PtCard.vue";
 
 export default {
   name: "CoinToss",
+  components: {
+    CytoDash,
+    PtCard,
+  },
+  props: {
+    hcPort: Number
+  },
 
   setup(props, context) {
-    // console.log("CoinToss.vue: allPtPromisesQuery: ");
-    // console.log(allPtPromisesQuery);
 
+    const conductorConfig = {
+      url: "ws://localhost",
+      port: props.hcPort ? props.hcPort : 33000,
+      dna: "pt-promises-dna",
+      instanceId: "test-instance",
+      zomeName: "core"
+    };
+
+    const hcWs = new hcWsClient(conductorConfig);
     
     const {
       result: hcInstancesRes,
       loading: hcInstancesLoading,
       error: hcInstancesErr,
       onResult
-    } = useQuery(holochainInstancesQuery);
+    } = useQuery(holochainInstancesQuery, null, { context: { hcWs: hcWs }});
     
 
     function handleBla() {
@@ -57,17 +79,19 @@ export default {
       loading: ptListLoading,
       error: ptListErr,
       refetch: refetchPt
-    } = useQuery(allPtPromisesQuery);
+    } = useQuery(allPtPromisesQuery, null, { context: { hcWs: hcWs }});
 
     //gotPts();
 
     console.log("useQuery(prPromisesbla): ");
     console.log(ptListRes);
 
-    const { mutate: addPtPromiseMutFn } = useMutation(addPtPromiseMutation);
+    const { mutate: addPtPromiseMutFn } = useMutation(addPtPromiseMutation, { context: { hcWs: hcWs } });
 
-    const ptInput = reactive({ title: "default", content: "default" });
-
+    const ptInput = reactive({
+      title: "",
+      content: ""
+    });
 
     const gotPtPromises = useResult(ptListRes, null, (data) => data.allPtPromises); //data.allPtPromises    
     const gotHcInstances = useResult(hcInstancesRes, null, (data) => data.holochainInstances);
