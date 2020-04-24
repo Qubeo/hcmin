@@ -22,15 +22,15 @@ const schemaLink = new SchemaLink({
 // Q: Implement GraphQL server directly on Holochain? :o
 const httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql",
-  fetchPolicy: 'no-cache'
+  fetchPolicy: "no-cache"
 });
 
 const defaultOptions = {
   Query: {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  },
-}
+    fetchPolicy: "no-cache",
+    errorPolicy: "all"
+  }
+};
 
 // var links = [schemaLink];
 
@@ -40,13 +40,13 @@ const defaultOptions = {
 
 // const link = ApolloLink.from(links);
 
-const apolloCache = new InMemoryCache({ fetchPolicy: 'no-cache' }); // Q: { addTypename: true }?
+const apolloCache = new InMemoryCache({ fetchPolicy: "no-cache" }); // Q: { addTypename: true }?
 
 const apolloClient = new ApolloClient({
   link: httpLink,
   cache: apolloCache,
   typeDefs,
-  resolvers,  
+  resolvers,
   connectToDevTools: true,
   options: defaultOptions
 });

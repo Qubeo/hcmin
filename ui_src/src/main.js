@@ -8,6 +8,7 @@ import apolloClient from "./apolloClient";
 import { ApolloClients } from "@vue/apollo-composable";
 import router from "@/router";
 import { provide } from "@vue/composition-api";
+import vuetify from "./plugins/vuetify";
 // import VueApollo from '@vue/apollo-option'
 // import VueApolloComponents from '@vue/apollo-components'
 
@@ -21,6 +22,8 @@ new Vue({
       // hasuClient: apolloClientHasu
     });
   },
+
   router,
+  vuetify,
   render: h => h(App)
 }).$mount("#app");

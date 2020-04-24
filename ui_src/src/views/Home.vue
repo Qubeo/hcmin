@@ -18,11 +18,9 @@ export default {
   },
 
   setup(props) {
-
     return {
       props
-    }
+    };
   }
-
 };
 </script>

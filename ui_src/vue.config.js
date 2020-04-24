@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  transpileDependencies: ["vuetify"],
   chainWebpack: config => {
     config.module
       .rule('graphql')
@@ -21,4 +22,12 @@ module.exports = {
       }
     };
   },
-}
+
+  publicPath: '',
+  // outputDir: '../docs/examples',
+  assetsDir: undefined,
+  runtimeCompiler: undefined,
+  productionSourceMap: undefined,
+  parallel: undefined,
+  css: undefined
+};
