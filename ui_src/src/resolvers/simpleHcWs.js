@@ -98,6 +98,7 @@ export class hcWsClient {
     });
 
     console.log("simpleHcWs: callZome(): ");
+    console.log(ws);
     // let that = this;
 
     let method = "call";
@@ -107,7 +108,11 @@ export class hcWsClient {
       function: zomeFn,
       args: args
     };
-    let timeout = 1000;
+
+    console.log("simpleHcWs: params: ");
+    console.log(params);
+
+    let timeout = 1500;
     // Modified from hc-web-client
     if (ws.ready) {
       return Promise.resolve(ws.call(method, params));

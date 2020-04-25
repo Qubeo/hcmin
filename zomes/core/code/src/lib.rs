@@ -54,6 +54,11 @@ mod pt_promises {
     }
 
     #[zome_fn("hc_public")]
+    pub fn create_pt_link(base_addr: Address, target_addr: Address, link_type: String, link_tag: String) -> ZomeApiResult<Address> {
+        Ok(pt_promise::handlers::create_pt_link(base_addr, target_addr, link_type, link_tag)?)
+    }
+
+    #[zome_fn("hc_public")]
     pub fn get_entry_timestamp(entry_addr: Address) -> ZomeApiResult<Iso8601> {
         pt_promise::timestamp(entry_addr)
     }

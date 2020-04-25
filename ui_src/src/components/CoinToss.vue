@@ -11,67 +11,42 @@
     <v-content>
       <v-container fluid>
         <v-row>
-          <v-col
-            cols="4"
-            class="grey lighten-5"
-            style="height: 300px;"
-          >
-            
-          </v-col>
-
-          <v-col cols="4">
+ 
+          <v-col cols="2">
             <v-card class="pa-4">
                 <b>Add entry</b><br />
                 <v-text-field outlined dense label="Title" v-model="ptInput.title" />
-                <br />
                 <v-text-field outlined dense label="Content" v-model="ptInput.content" />
-                <br />
-                <v-btn @click="commitPtPromise(ptInput)">Create PT</v-btn>
-                <v-btn @click="3">Show list</v-btn>
+                <v-btn @click="commitPtPromise(ptInput)" class="mr-4">Create PT</v-btn>                
+                <v-btn @click="3">Show list</v-btn><br /><br />
               
-                Add link:<br />
-                <v-text-field label="Type" dense filled id="link_type"></v-text-field>
-                <br />
-                <v-text-field label="Tag" dense filled id="link_tag"></v-text-field>
-                <v-text-field label="Base addr" dense filled></v-text-field>
-                <v-text-field label="Target addr" dense filled></v-text-field>
+                <b>Add link</b><br />
+                <v-text-field v-model="ptLink.baseAddr" label="Base addr" dense filled></v-text-field>
+                <v-text-field v-model="ptLink.targetAddr" label="Target addr" dense filled></v-text-field>
+                <v-text-field v-model="ptLink.type" label="Type" dense filled id="link_type"></v-text-field>
+                <v-text-field v-model="ptLink.tag" label="Tag" dense filled id="link_tag"></v-text-field>
+                <v-btn @click="addPtlink()">Add link</v-btn>
                 <br />
               
             </v-card>
           </v-col>
 
           <v-col cols="4">
-            <v-card class="pa-4">
+            <v-card class="pa-4; height:500px;" min-height="500">
               <div v-for="(item, index) in gotPtPromises" :key="index" style="float:right">
                 <pt-card :ptItem="item"></pt-card>
               </div>
             </v-card>
           </v-col>
-        </v-row>
+
 
           <v-col cols="4">
-            <v-card class="pa-4" style="height: 300px">
+            <v-card class="pa-4" style="height:500px">
               <cyto-dash style="border-radius:6px; border:1px solid #ccc; float:left;"></cyto-dash>
             </v-card>
           </v-col>
 
-
-
-        <v-card>
-            <pre>
-            Link as a metaphor, event, wavelet of metaphorization. The fractal back and forth of...
-            "The excellence signals and forms drowned by the provincial pressures for localism."
-            Can't we have both, though? Aspiring for excellence, bottom-up, while being connected, through sparse weak links, to distilled excellence?
-            Cosmolocalism? Optimal cluster sizes?
-
-            I feel toothless, the models I have are a toy models, the data I have I can't fully interpret and simulate.
-            I want data dashboards connected to my projects and endeavours.
-            I want dataviz to ground and calibrate my intuitions, to support fluid embodiment and enactment.
-            I want to start simulating KH, to have visuals of the flows between differnt stakeholders, infrastructures...
-            Data driven Citizen Jacq.
-            Last and first of the crusaders.
-            </pre>    
-          </v-card>
+        </v-row>
 
         <!--
     <div v-if="ptListLoading">ptList Loading...</div>
@@ -154,6 +129,18 @@ export default {
       content: ""
     });
 
+    const ptLink = reactive({
+        baseAddr: "",
+        targetAddr: "",
+        type:  "adjacent",
+        tag: "strongly"
+    });
+
+    function addPtlink() {
+        hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "create_pt_link", {
+          base_addr: ptLink.baseAddr, target_addr: ptLink.targetAddr, link_type: ptLink.type, link_tag: ptLink.tag });
+    }
+
     const gotPtPromises = useResult(
       ptListRes,
       null,
@@ -232,8 +219,18 @@ export default {
       ptListLoading,
       ptListErr,
       ptInput,
+      ptLink,
+      addPtlink,
       commitPtPromise
     };
   }
 };
 </script>
+
+<style scoped>
+
+body {
+  font-family: 'Work Sans';
+}
+
+</style>

@@ -29,6 +29,11 @@ fn pt_promises_anchor() -> ZomeApiResult<Address> {
     anchor(PT_PROMISES_ANCHOR_TYPE.to_string(), PT_PROMISES_ANCHOR_TEXT.to_string())
 }
 
+pub fn create_pt_link(base_addr: Address, target_addr: Address, link_type: String, link_tag: String) -> ZomeApiResult<Address> {
+    hdk::debug("create_pt_link:").ok();
+    hdk::link_entries(&base_addr, &target_addr, link_type, link_tag)      // Q: Need to clone?
+}
+
 // CRUD
 // CREATE
 pub fn create_pt_promise(pt_promise_entry: PTPromiseEntry) -> ZomeApiResult<PTPromise> {

@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/home/revial/prog/holochain/hcmin/dist/hcmin.dna.json'
-hash = 'Qmf2SUSaUj7PRWq1SmQ3HxWTjfUyL4UDjPNFAdb4DoAQZU'
+hash = 'QmXMzvCQz8ddxt8Pe1Q1TGsmqooC2VyjMBqksnHmy2tyCa'
 id = 'hc-run-dna'
 
 [[instances]]
