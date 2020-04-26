@@ -98,7 +98,7 @@ export class hcWsClient {
     });
 
     console.log("simpleHcWs: callZome(): ");
-    console.log(ws);
+    // console.log(ws);
     // let that = this;
 
     let method = "call";

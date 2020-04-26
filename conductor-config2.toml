@@ -7,7 +7,7 @@ ui_interfaces = []
 id = 'hc-run-agent'
 keystore_file = 'Bobuc'
 name = 'Bobuc'
-public_address = 'HcSCjwhzHA9Tvws9q5AmVFgx6NrvazncywqyvVd9cBmz44ma6YA8AzZ3hZ4Zexz'
+public_address = 'HcSCi6q54V833PVHd9mckeY33vCHeymwm7wnkM5UwKGnbijrC38eV3FOqqmb7za'
 test_agent = true
 
 [[dnas]]

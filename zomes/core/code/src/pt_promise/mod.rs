@@ -1,4 +1,4 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::{ Deserialize, Serialize };
 use holochain_json_derive::DefaultJson;
 use hdk::{
     self,
@@ -133,7 +133,27 @@ pub fn pt_promise_definition() -> ValidatingEntryType {
         links: [
             from!(
                 holochain_anchors::ANCHOR_TYPE,
-                link_type: PT_PROMISE_LINK_TYPE,
+                link_type: PT_PROMISE_LINK_TYPE,                        // Q: Can only be associated with one type of base ~ target pair? If so, why?
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: |validation_data: hdk::LinkValidationData| {
+                    match validation_data
+                    {
+                        hdk::LinkValidationData::LinkAdd{link, validation_data} =>
+                        {
+                            validation::validate_link_add(link, validation_data)
+                        },
+                        hdk::LinkValidationData::LinkRemove{link, validation_data} =>
+                        {
+                            validation::validate_link_remove(link, validation_data)
+                        }
+                    }
+                }
+            ),
+            from!(
+                PT_PROMISE_ENTRY_NAME,
+                link_type: "pt_entries",
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },

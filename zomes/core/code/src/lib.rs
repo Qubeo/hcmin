@@ -13,6 +13,7 @@ use crate::pt_promise::PTPromise;
 use crate::pt_promise::PTPromiseEntry;
 
 pub mod pt_promise;
+pub mod player;
 
 // Q: Where's defined the zome name, used for the JSON-RPC API? 
 #[zome]

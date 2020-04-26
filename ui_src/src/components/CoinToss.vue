@@ -4,7 +4,7 @@
     <v-card>
       <div v-if="hcInstancesLoading">hcInstances Loading...</div>
       <div v-else-if="hcInstancesErr">hcInstances error! {{ hcInstancesErr }}</div>
-      <div class="float: left" v-else>hcInstances Result: {{ gotHcInstances[0].dna }}</div>
+      <div class="float: left" v-else>Holochain instances: {{ gotHcInstances[0].id }}, {{ gotHcInstances[0].dna }}, {{ gotHcInstances[0].agent }}</div>
     </v-card>
             
 
@@ -136,9 +136,12 @@ export default {
         tag: "strongly"
     });
 
-    function addPtlink() {
-        hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "create_pt_link", {
+    async function addPtlink() {
+        let res = await hcWs.callZome(conductorConfig.instanceId, conductorConfig.zomeName, "create_pt_link", {
           base_addr: ptLink.baseAddr, target_addr: ptLink.targetAddr, link_type: ptLink.type, link_tag: ptLink.tag });
+        console.log("CoinToss: addPtLink(): ");
+        console.log(res);
+        return res;
     }
 
     const gotPtPromises = useResult(
